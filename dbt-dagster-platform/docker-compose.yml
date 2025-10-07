@@ -1,0 +1,71 @@
+version: '3.8'
+
+services:
+  # PostgreSQL database for Dagster storage
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: dagster
+      POSTGRES_USER: dagster
+      POSTGRES_PASSWORD: dagster_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dagster"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Dagster webserver
+  dagster-webserver:
+    build: .
+    environment:
+      - ENVIRONMENT=dev
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=dagster
+      - POSTGRES_USER=dagster
+      - POSTGRES_PASSWORD=dagster_password
+    env_file:
+      - .env
+    volumes:
+      - ./workspace:/opt/dagster/workspace
+      - ./profiles:/opt/dagster/dbt_profiles
+      - ./dbt_projects:/opt/dagster/dbt_projects
+      - ./config:/opt/dagster/config
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: dagster-webserver -h 0.0.0.0 -p 3000 -w workspace/workspace.yaml
+
+  # Dagster daemon (for background processes)
+  dagster-daemon:
+    build: .
+    environment:
+      - ENVIRONMENT=dev
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=dagster
+      - POSTGRES_USER=dagster
+      - POSTGRES_PASSWORD=dagster_password
+    env_file:
+      - .env
+    volumes:
+      - ./workspace:/opt/dagster/workspace
+      - ./profiles:/opt/dagster/dbt_profiles
+      - ./dbt_projects:/opt/dagster/dbt_projects
+      - ./config:/opt/dagster/config
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: dagster-daemon run
+
+volumes:
+  postgres_data:

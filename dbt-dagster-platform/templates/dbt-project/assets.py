@@ -1,0 +1,155 @@
+"""
+Template for Dagster assets that integrate with dbt projects.
+
+This file should be copied to your new dbt project and customized as needed.
+"""
+
+import os
+from pathlib import Path
+from typing import Dict, Any
+
+from dagster import (
+    Definitions,
+    load_assets_from_dbt_project,
+    dbt_assets,
+    AssetExecutionContext,
+    AssetMaterialization,
+    AssetObservation,
+    get_dagster_logger,
+)
+from dagster_dbt import DbtCliResource, dbt_assets
+
+# Import configuration
+import sys
+sys.path.append(str(Path(__file__).parent.parent.parent))
+from config.settings import get_settings
+
+logger = get_dagster_logger()
+
+
+class DbtProjectConfig:
+    """Configuration for dbt project integration."""
+    
+    def __init__(self, project_name: str):
+        self.project_name = project_name
+        self.settings = get_settings()
+        self.project_dir = Path(self.settings.dbt.project_dir) / project_name
+        self.profiles_dir = self.settings.dbt.profiles_dir
+        
+    def get_dbt_cli_resource(self) -> DbtCliResource:
+        """Get configured DbtCliResource."""
+        return DbtCliResource(
+            project_dir=str(self.project_dir),
+            profiles_dir=self.profiles_dir,
+        )
+
+
+# =============================================================================
+# CUSTOMIZE THIS SECTION FOR YOUR PROJECT
+# =============================================================================
+
+# Project configuration - UPDATE THESE VALUES
+PROJECT_NAME = "your_project_name"  # Change this to your project name
+PROJECT_DESCRIPTION = "Your dbt project description"  # Add description
+
+# dbt project configuration
+dbt_config = DbtProjectConfig(PROJECT_NAME)
+dbt_resource = dbt_config.get_dbt_cli_resource()
+
+# =============================================================================
+# ASSET DEFINITIONS
+# =============================================================================
+
+# Load all dbt assets from the project
+dbt_assets_from_project = load_assets_from_dbt_project(
+    project_dir=str(dbt_config.project_dir),
+    profiles_dir=dbt_config.profiles_dir,
+    select="*",  # You can customize this to select specific models
+    exclude="*test*",  # Exclude test models by default
+    key_prefix=[PROJECT_NAME],  # Add project prefix to asset keys
+)
+
+
+# =============================================================================
+# CUSTOM ASSETS (Optional)
+# =============================================================================
+
+# You can add custom Dagster assets here that complement your dbt models
+# Example: Data quality checks, external API calls, etc.
+
+from dagster import asset, AssetIn
+
+@asset(
+    name=f"{PROJECT_NAME}_project_health_check",
+    description="Health check for dbt project",
+    group_name=PROJECT_NAME,
+)
+def project_health_check(context: AssetExecutionContext) -> Dict[str, Any]:
+    """Check the health of the dbt project."""
+    logger.info(f"Running health check for {PROJECT_NAME}")
+    
+    # Example health checks
+    health_status = {
+        "project_name": PROJECT_NAME,
+        "environment": context.instance.name,
+        "status": "healthy",
+        "checks": {
+            "dbt_project_exists": dbt_config.project_dir.exists(),
+            "profiles_exist": Path(dbt_config.profiles_dir).exists(),
+        }
+    }
+    
+    # Log the health status
+    context.log.info(f"Health check results: {health_status}")
+    
+    return health_status
+
+
+@asset(
+    name=f"{PROJECT_NAME}_dbt_compile_check",
+    description="Compile dbt project to check for errors",
+    group_name=PROJECT_NAME,
+    deps=dbt_assets_from_project,
+)
+def dbt_compile_check(context: AssetExecutionContext) -> str:
+    """Compile the dbt project to check for compilation errors."""
+    logger.info(f"Compiling dbt project: {PROJECT_NAME}")
+    
+    try:
+        # Run dbt compile
+        result = dbt_resource.cli(["compile"], context=context)
+        
+        if result.return_code == 0:
+            context.log.info("dbt compile successful")
+            return "compile_success"
+        else:
+            context.log.error(f"dbt compile failed: {result.raw_output}")
+            raise Exception(f"dbt compile failed: {result.raw_output}")
+            
+    except Exception as e:
+        context.log.error(f"Error during dbt compile: {str(e)}")
+        raise
+
+
+# =============================================================================
+# ASSET DEFINITIONS EXPORT
+# =============================================================================
+
+# Combine all assets
+all_assets = [
+    *dbt_assets_from_project,
+    project_health_check,
+    dbt_compile_check,
+]
+
+# Create the definitions
+defs = Definitions(
+    assets=all_assets,
+    resources={
+        "dbt": dbt_resource,
+    },
+)
+
+# Export for Dagster
+__all__ = ["defs", "dbt_assets_from_project", "dbt_resource"]
+

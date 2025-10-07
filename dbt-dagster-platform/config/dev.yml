@@ -1,0 +1,34 @@
+# Development Environment Configuration
+environment: dev
+
+# Snowflake Configuration (Development)
+snowflake:
+  account: "your_dev_account"
+  warehouse: "DEV_WH"
+  database: "DEV_DB"
+  schema: "PUBLIC"
+  role: "DEV_ROLE"
+
+# Dagster Configuration
+dagster:
+  webserver_port: 3000
+  telemetry_enabled: false
+
+# Storage Configuration
+storage:
+  backend: "postgres"
+  postgres_host: "localhost"
+  postgres_port: 5432
+  postgres_db: "dagster_dev"
+  postgres_user: "dagster"
+  postgres_password: "dagster_dev_password"
+
+# dbt Configuration
+dbt:
+  profiles_dir: "./profiles"
+  project_dir: "./dbt_projects"
+
+# Logging
+logging:
+  level: "DEBUG"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

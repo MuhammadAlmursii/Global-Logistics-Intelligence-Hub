@@ -1,0 +1,34 @@
+# Production Environment Configuration
+environment: prod
+
+# Snowflake Configuration (Production)
+snowflake:
+  account: "your_prod_account"
+  warehouse: "PROD_WH"
+  database: "PROD_DB"
+  schema: "PUBLIC"
+  role: "PROD_ROLE"
+
+# Dagster Configuration
+dagster:
+  webserver_port: 3000
+  telemetry_enabled: true
+
+# Storage Configuration
+storage:
+  backend: "postgres"
+  postgres_host: "postgres-prod"
+  postgres_port: 5432
+  postgres_db: "dagster_prod"
+  postgres_user: "dagster"
+  postgres_password: "dagster_prod_password"
+
+# dbt Configuration
+dbt:
+  profiles_dir: "/opt/dagster/profiles"
+  project_dir: "/opt/dagster/dbt_projects"
+
+# Logging
+logging:
+  level: "WARNING"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
