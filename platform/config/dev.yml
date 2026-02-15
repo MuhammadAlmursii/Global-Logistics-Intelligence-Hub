@@ -1,0 +1,42 @@
+# Development Environment Configuration
+environment: dev
+
+# GCP BigQuery Configuration (Development)
+gcp:
+  project_id: "your-dev-gcp-project-id"
+  bigquery:
+    dataset: "dev_dataset"
+    location: "us-central1"
+    priority: "INTERACTIVE"
+    timeout_seconds: 300
+  gcs:
+    bucket_name: "dev-bucket-name"
+    raw_documents_bucket: "dev-raw-documents"
+    processed_documents_bucket: "dev-processed-documents"
+  vertex_ai:
+    location: "us-central1"
+    embedding_model: "textembedding-gecko@003"
+
+# Dagster Configuration
+dagster:
+  webserver_port: 3000
+  telemetry_enabled: false
+
+# Storage Configuration
+storage:
+  backend: "postgres"
+  postgres_host: "localhost"
+  postgres_port: 5432
+  postgres_db: "dagster_dev"
+  postgres_user: "dagster"
+  postgres_password: "dagster_dev_password"
+
+# dbt Configuration
+dbt:
+  profiles_dir: "./profiles"
+  project_dir: "./dbt_projects"
+
+# Logging
+logging:
+  level: "DEBUG"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

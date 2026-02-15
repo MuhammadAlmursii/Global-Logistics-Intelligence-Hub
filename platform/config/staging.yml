@@ -1,0 +1,42 @@
+# Staging Environment Configuration
+environment: staging
+
+# GCP BigQuery Configuration (Staging)
+gcp:
+  project_id: "your-staging-gcp-project-id"
+  bigquery:
+    dataset: "staging_dataset"
+    location: "US"
+    priority: "BATCH"  # Use BATCH for staging to reduce costs
+    timeout_seconds: 600
+  gcs:
+    bucket_name: "staging-bucket-name"
+    raw_documents_bucket: "staging-raw-documents"
+    processed_documents_bucket: "staging-processed-documents"
+  vertex_ai:
+    location: "us-central1"
+    embedding_model: "textembedding-gecko@003"
+
+# Dagster Configuration
+dagster:
+  webserver_port: 3001
+  telemetry_enabled: false
+
+# Storage Configuration
+storage:
+  backend: "postgres"
+  postgres_host: "postgres-staging"
+  postgres_port: 5432
+  postgres_db: "dagster_staging"
+  postgres_user: "dagster"
+  postgres_password: "dagster_staging_password"
+
+# dbt Configuration
+dbt:
+  profiles_dir: "/opt/dagster/profiles"
+  project_dir: "/opt/dagster/dbt_projects"
+
+# Logging
+logging:
+  level: "INFO"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"

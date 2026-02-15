@@ -1,0 +1,96 @@
+services:
+  # PostgreSQL database for Dagster storage
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: dagster
+      POSTGRES_USER: dagster
+      POSTGRES_PASSWORD: dagster_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dagster"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Dagster webserver
+  dagster-webserver:
+    build: .
+    environment:
+      - ENVIRONMENT=dev
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=dagster
+      - POSTGRES_USER=dagster
+      - POSTGRES_PASSWORD=dagster_password
+    env_file:
+      - .env
+    volumes:
+      - ./workspace:/opt/dagster/workspace
+      - ./profiles:/opt/dagster/dbt_profiles
+      - ./dbt_projects:/opt/dagster/dbt_projects
+      - ./config:/opt/dagster/config
+      - ./secrets:/opt/dagster/secrets
+      - ./test_bigquery_connection.py:/opt/dagster/test_bigquery_connection.py
+      - ./scripts:/opt/dagster/scripts
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: dagster-webserver -h 0.0.0.0 -p 3000 -w workspace/workspace.yaml
+
+  # Dagster daemon (for background processes)
+  dagster-daemon:
+    build: .
+    environment:
+      - ENVIRONMENT=dev
+      - DAGSTER_HOME=/opt/dagster/dagster_home
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=dagster
+      - POSTGRES_USER=dagster
+      - POSTGRES_PASSWORD=dagster_password
+    env_file:
+      - .env
+    volumes:
+      - ./workspace:/opt/dagster/workspace
+      - ./profiles:/opt/dagster/dbt_profiles
+      - ./dbt_projects:/opt/dagster/dbt_projects
+      - ./config:/opt/dagster/config
+      - ./secrets:/opt/dagster/secrets
+      - ./test_bigquery_connection.py:/opt/dagster/test_bigquery_connection.py
+      - ./scripts:/opt/dagster/scripts
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: dagster-daemon run
+  
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  nessie:
+    image: ghcr.io/projectnessie/nessie:0.107.1
+    container_name: nessie
+    ports:
+      - "19120:19120"
+
+
+volumes:
+  postgres_data:
+  minio_data:

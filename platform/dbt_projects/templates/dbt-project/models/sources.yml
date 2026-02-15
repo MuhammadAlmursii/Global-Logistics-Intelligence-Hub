@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: PLAYVOX_RAW
+    description: "Raw data from source systems"
+    tables:
+      - name: EVALUATIONS
+        description: "Example PLAYVOX_RAW table"
+

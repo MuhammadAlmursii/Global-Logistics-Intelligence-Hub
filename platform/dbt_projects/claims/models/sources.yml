@@ -1,0 +1,8 @@
+version: 2
+
+sources:
+  - name: raw
+    database: scenic-style-421412      # usually your BigQuery project
+    schema: raw                         # BigQuery dataset name
+    tables:
+      - name: raw_policy

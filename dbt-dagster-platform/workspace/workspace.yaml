@@ -1,6 +1,0 @@
-# Dagster workspace configuration
-load_from:
-  - python_module:
-      module_name: workspace.definitions
-
-

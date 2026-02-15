@@ -1,0 +1,24 @@
+version: 2
+
+sources:
+  - name: raw
+    description: "Raw data from source systems"
+    tables:
+      - name: example_table
+        description: "Example raw table"
+        columns:
+          - name: id
+            description: "Primary key"
+            tests:
+              - unique
+              - not_null
+          - name: field1
+            description: "First field"
+          - name: field2
+            description: "Second field"
+          - name: created_at
+            description: "Record creation timestamp"
+          - name: updated_at
+            description: "Record update timestamp"
+
+

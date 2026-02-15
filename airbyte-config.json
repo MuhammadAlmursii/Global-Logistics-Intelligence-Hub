@@ -1,0 +1,32 @@
+[30;101m[30;101m  ERROR  [0m[0m [91m[91munexpected argument export[0m[0m
+Usage: abctl <command> [flags]
+
+Airbyte's command line tool for managing a local Airbyte installation.
+
+Flags:
+  -h, --help       Show context-sensitive help.
+  -v, --verbose    Enable verbose output.
+
+Commands:
+  local credentials [flags]
+    Get local Airbyte user credentials.
+
+  local install [flags]
+    Install local Airbyte.
+
+  local deployments [flags]
+    View local Airbyte deployments.
+
+  local status
+    Get local Airbyte status.
+
+  local uninstall [flags]
+    Uninstall local Airbyte.
+
+  images manifest [flags]
+    Display a manifest of images used by Airbyte and abctl.
+
+  version [flags]
+    Display version information.
+
+Run "abctl <command> --help" for more information on a command.

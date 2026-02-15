@@ -1,0 +1,43 @@
+# Production Environment Configuration
+environment: prod
+
+# GCP BigQuery Configuration (Production)
+gcp:
+  project_id: "your-prod-gcp-project-id"
+  bigquery:
+    dataset: "prod_dataset"
+    location: "us-central1"
+    priority: "INTERACTIVE"  # Use INTERACTIVE for production for faster queries
+    timeout_seconds: 300
+    maximum_bytes_billed: 1000000000  # Optional: limit query costs
+  gcs:
+    bucket_name: "prod-bucket-name"
+    raw_documents_bucket: "prod-raw-documents"
+    processed_documents_bucket: "prod-processed-documents"
+  vertex_ai:
+    location: "us-central1"
+    embedding_model: "textembedding-gecko@003"
+
+# Dagster Configuration
+dagster:
+  webserver_port: 3002
+  telemetry_enabled: true
+
+# Storage Configuration
+storage:
+  backend: "postgres"
+  postgres_host: "postgres-prod"
+  postgres_port: 5432
+  postgres_db: "dagster_prod"
+  postgres_user: "dagster"
+  postgres_password: "dagster_prod_password"
+
+# dbt Configuration
+dbt:
+  profiles_dir: "/opt/dagster/profiles"
+  project_dir: "/opt/dagster/dbt_projects"
+
+# Logging
+logging:
+  level: "WARNING"
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
