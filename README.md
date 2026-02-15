@@ -22,15 +22,43 @@
 
 Global-Logistics-Intelligence-Hub/
 │
-├── platform/ # Dagster pipelines & Python scripts
-├── dbt/ # dbt models, seeds, snapshots
-├── docker/ # Dockerfiles & Docker Compose
-├── configs/ # Configuration files (YAML, JSON)
-├── docs/ # Documentation files
-├── tests/ # Unit and integration tests
-├── README.md # Project overview
-└── airbyte-config.json # Airbyte integration config
-
+├── platform/                # Dagster pipelines & Python scripts
+│   ├── pipelines/           # Dagster pipeline definitions
+│   ├── assets/              # Dagster asset definitions
+│   ├── jobs/                # Predefined Dagster jobs
+│   └── utils/               # Utility scripts
+│
+├── dbt/                     # dbt projects and transformations
+│   ├── projects/            # Each dbt project (e.g., analytics, marts)
+│   ├── seeds/               # Seed data
+│   └── snapshots/           # dbt snapshots
+│
+├── docker/                   # Dockerfiles & Docker Compose
+│   ├── dev/                 # Dev environment compose
+│   ├── staging/             # Staging compose
+│   ├── prod/                # Production compose
+│   └── entrypoint.sh        # Common entrypoint
+│
+├── configs/                  # Configuration files
+│   ├── dev/                 # Dev configs
+│   ├── staging/             # Staging configs
+│   └── prod/                # Production configs
+│
+├── docs/                     # Project documentation
+│   ├── architecture.md
+│   ├── data_ingestion.md
+│   ├── security.md
+│   ├── storage_scaling.md
+│   ├── setup.md
+│   └── archive/             # Old docs backup
+│
+├── tests/                    # Unit & integration tests
+│   ├── dagster/             # Dagster pipeline tests
+│   └── dbt/                 # dbt model tests
+│
+├── .env.example              # Environment variable template
+├── README.md                 # Project overview
+└── airbyte-config.json       # Airbyte configuration
 
 ---
 
