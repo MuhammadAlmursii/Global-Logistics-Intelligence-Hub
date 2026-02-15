@@ -32,18 +32,18 @@ Global-Logistics-Intelligence-Hub/
 │   ├── seeds/               # Seed data
 │   └── snapshots/           # dbt snapshots
 │
-├── docker/                   # Dockerfiles & Docker Compose
+├── docker/                  # Dockerfiles & Docker Compose
 │   ├── dev/                 # Dev environment compose
 │   ├── staging/             # Staging compose
 │   ├── prod/                # Production compose
 │   └── entrypoint.sh        # Common entrypoint
 │
-├── configs/                  # Configuration files
+├── configs/                 # Configuration files
 │   ├── dev/                 # Dev configs
 │   ├── staging/             # Staging configs
 │   └── prod/                # Production configs
 │
-├── docs/                     # Project documentation
+├── docs/                    # Project documentation
 │   ├── architecture.md
 │   ├── data_ingestion.md
 │   ├── security.md
@@ -51,13 +51,13 @@ Global-Logistics-Intelligence-Hub/
 │   ├── setup.md
 │   └── archive/             # Old docs backup
 │
-├── tests/                    # Unit & integration tests
+├── tests/                   # Unit & integration tests
 │   ├── dagster/             # Dagster pipeline tests
 │   └── dbt/                 # dbt model tests
 │
-├── .env.example              # Environment variable template
-├── README.md                 # Project overview
-└── airbyte-config.json       # Airbyte configuration
+├── .env.example             # Environment variable template
+├── README.md                # Project overview
+└── airbyte-config.json      # Airbyte configuration
 
 
 ---
