@@ -18,10 +18,9 @@
 
 ---
 
-## Directory Structure
+# Global Logistics Intelligence Hub – Directory Structure
 
 Global-Logistics-Intelligence-Hub/
-│
 ├── platform/                # Dagster pipelines & Python scripts
 │   ├── pipelines/           # Dagster pipeline definitions
 │   ├── assets/              # Dagster asset definitions
@@ -59,6 +58,7 @@ Global-Logistics-Intelligence-Hub/
 ├── .env.example              # Environment variable template
 ├── README.md                 # Project overview
 └── airbyte-config.json       # Airbyte configuration
+
 
 ---
 
